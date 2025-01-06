@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drive & Loc - Location de Voitures</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hidden { display: none; }
+        #slide1 {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                        url('img/aaron-huber-V09Io5ln-Qo-unsplash.jpg'); /* Add your Porsche image path */
+            background-size: cover;
+            background-position: center;
+        }
+        
+        #slide2 {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+                        url('img/alex_rainer-1_lxISUE3F4-unsplash.jpg'); /* Add your BMW image path */
+            background-size: cover;
+            background-position: center;
+        }
+
+        .luxury-hover {
+            position: relative;
+        }
+
+        .luxury-hover::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 1px;
+            bottom: -2px;
+            left: 0;
+            background-color: white;
+            transition: width 0.3s ease-in-out;
+        }
+
+        .luxury-hover:hover::after {
+            width: 100%;
+        }
+
+        /* Mobile menu animation */
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+
+        /* Profile dropdown animation */
+        .profile-dropdown {
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease-in-out;
+            pointer-events: none;
+        }
+
+        .profile-dropdown.active {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+    </style>
+</head>
+<body class="bg-neutral-900 text-white">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 px-8 py-6 bg-neutral-900/90 backdrop-blur-sm">
+        <div class="flex justify-between items-center">
+            <div class="text-white font-bold text-2xl hover:scale-105 transition-all duration-300 cursor-pointer">
+                DRIVE & LOC
+            </div>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex gap-8 items-center">
+                <a href="frontEnd/vehicule.php" class="luxury-hover text-white hover:text-gray-300 transition-colors duration-300">Véhicules</a>
+                <a href="frontEnd/vehicule.php" class="luxury-hover text-white hover:text-gray-300 transition-colors duration-300">Services</a>
+                <a href="frontEnd/vehicule.php" class="luxury-hover text-white hover:text-gray-300 transition-colors duration-300">À propos</a>
+                <a href="frontEnd/vehicule.php" class="bg-white text-black px-6 py-2 rounded hover:bg-gray-200 hover:-translate-y-0.5 transition-all duration-300">
+                    Réserver maintenant
+                </a>
+                
+                <!-- Profile Dropdown -->
+                <div class="relative profile-container">
+                    <div class="cursor-pointer text-2xl">👤</div>
+                    <div class="profile-dropdown absolute right-0 mt-4 bg-neutral-800 rounded-md shadow-lg py-2 min-w-[150px]">
+                        <a href="frontEnd/logout.php" class="block px-4 py-2 hover:bg-neutral-700 transition-colors duration-200">
+                            Se connecter
+                        </a>
+                        <a href="frontEnd/register.php" class="block px-4 py-2 hover:bg-neutral-700 transition-colors duration-200">
+                            S'inscrire
+                        </a>
+                        <hr class="my-2 border-neutral-700">
+                        <a href="frontEnd/logout.php" class="block px-4 py-2 hover:bg-neutral-700 transition-colors duration-200 text-red-400">
+                            Déconnexion
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-white" id="menuBtn">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu fixed inset-y-0 left-0 bg-neutral-900 w-64 p-8 md:hidden">
+            <div class="flex flex-col gap-6">
+                <a href="frontEnd/vehicule.php" class="text-white hover:text-gray-300">Véhicules</a>
+                <a href="frontEnd/vehicule.php" class="text-white hover:text-gray-300">Services</a>
+                <a href="frontEnd/vehicule.php" class="text-white hover:text-gray-300">À propos</a>
+                <a href="frontEnd/vehicule.php" class="bg-white text-black px-6 py-2 rounded text-center">
+                    Réserver maintenant
+                </a>
+                <hr class="border-neutral-700">
+                <a href="#login" class="text-white hover:text-gray-300">Se connecter</a>
+                <a href="#signup" class="text-white hover:text-gray-300">S'inscrire</a>
+                <a href="frontEnd/logout.php" class="text-red-400 hover:text-red-300">Déconnexion</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="relative h-screen overflow-hidden">
+        <div id="slides" class="relative h-full">
+            <!-- Slide 1 -->
+            <div id="slide1" class="absolute inset-0 transition-opacity duration-500 flex items-center px-8 md:px-16">
+                <div class="w-full md:w-1/2">
+                    <h2 class="text-gray-400 text-xl mb-4 tracking-wider">PREMIUM CAR RENTAL</h2>
+                    <h1 class="text-white text-4xl md:text-7xl font-bold mb-6 leading-tight">DRIVE & LOC</h1>
+                    <p class="text-gray-300 text-lg md:text-xl mb-8 max-w-lg">
+                        Découvrez l'excellence en location de voitures de luxe. Une flotte premium pour répondre à vos besoins.
+                    </p>
+                    <div class="flex gap-6">
+                        <a href="frontEnd/vehicule.php" class="bg-white text-black px-8 py-3 rounded-sm hover:bg-gray-200 transition-all">Réserver maintenant</a>
+                        <a href="frontEnd/vehicule.php" class="border border-white text-white px-8 py-3 rounded-sm hover:bg-white/10 transition-all">Voir la flotte</a>
+                    </div>
+                </div>
+                <div class="absolute bottom-16 left-8 md:left-16 flex gap-8 md:gap-16 flex-wrap">
+                    <div class="text-white">
+                        <div class="text-sm text-gray-400">MODÈLE</div>
+                        <div class="text-xl">Porsche 911 Carrera S</div>
+                    </div>
+                    <div class="text-white">
+                        <div class="text-sm text-gray-400">PRIX</div>
+                        <div class="text-xl">850 €/jour</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 2 -->
+            <!-- Slide 2 -->
+<div id="slide2" class="absolute inset-0 bg-zinc-900 transition-opacity duration-500 hidden flex items-center px-16">
+    <div class="w-1/2">
+        <h2 class="text-gray-400 text-xl mb-4 tracking-wider">PREMIUM CAR RENTAL</h2>
+        <h1 class="text-white text-7xl font-bold mb-6 leading-tight">PREMIUM FLEET</h1>
+        <p class="text-gray-300 text-xl mb-8 max-w-lg">
+            Profitez d'une collection de voitures d'élite conçues pour les connaisseurs.
+        </p>
+        <div class="flex gap-6">
+            <a href="#book" class="bg-white text-black px-8 py-3 rounded-sm hover:bg-gray-200 transition-all">Réserver maintenant</a>
+            <a href="#fleet" class="border border-white text-white px-8 py-3 rounded-sm hover:bg-white/10 transition-all">Voir la flotte</a>
+        </div>
+    </div>
+    <div class="absolute bottom-16 left-16 flex gap-16">
+        <div class="text-white">
+            <div class="text-sm text-gray-400">MODÈLE</div>
+            <div class="text-xl">BMW M5 Competition</div>
+        </div>
+        <div class="text-white">
+            <div class="text-sm text-gray-400">PRIX</div>
+            <div class="text-xl">750 €/jour</div>
+        </div>
+    </div>
+</div>
+
+        </div>
+
+        <!-- Slide Controls -->
+        <div class="absolute bottom-16 right-8 md:right-16 flex items-center gap-4 md:gap-6">
+            <button id="prev" class="p-2 rounded-full border border-white/20 text-white hover:bg-white/10 transition-all duration-300">
+                &lt;
+            </button>
+            <div class="flex gap-4">
+                <button class="dot w-8 md:w-12 h-1 bg-white"></button>
+                <button class="dot w-8 md:w-12 h-1 bg-gray-600"></button>
+            </div>
+            <button id="next" class="p-2 rounded-full border border-white/20 text-white hover:bg-white/10 transition-all duration-300">
+                &gt;
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript for Slide Navigation and Mobile Menu -->
+    <script>
+        // Existing slide navigation code
+        const slides = document.querySelectorAll("#slides > div");
+        const dots = document.querySelectorAll(".dot");
+        const nextBtn = document.getElementById("next");
+        const prevBtn = document.getElementById("prev");
+        let currentSlide = 0;
+
+        const updateSlides = () => {
+            slides.forEach((slide, index) => {
+                if (index === currentSlide) {
+                    slide.classList.remove("hidden");
+                } else {
+                    slide.classList.add("hidden");
+                }
+            });
+            dots.forEach((dot, index) => {
+                dot.classList.toggle("bg-white", index === currentSlide);
+                dot.classList.toggle("bg-gray-600", index !== currentSlide);
+            });
+        };
+
+        nextBtn.addEventListener("click", () => {
+            currentSlide = (currentSlide + 1) % slides.length;
+            updateSlides();
+        });
+
+        prevBtn.addEventListener("click", () => {
+            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+            updateSlides();
+        });
+
+        dots.forEach((dot, index) => {
+            dot.addEventListener("click", () => {
+                currentSlide = index;
+                updateSlides();
+            });
+        });
+
+        // Initialize slides
+        updateSlides();
+
+        // Mobile menu functionality
+        const menuBtn = document.getElementById("menuBtn");
+        const mobileMenu = document.querySelector(".mobile-menu");
+        let menuOpen = false;
+
+        menuBtn.addEventListener("click", () => {
+            menuOpen = !menuOpen;
+            mobileMenu.classList.toggle("active", menuOpen);
+            
+            // Update menu icon
+            menuBtn.innerHTML = menuOpen 
+                ? '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>'
+                : '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>';
+        });
+
+        // Profile dropdown functionality
+const profileContainer = document.querySelector(".profile-container");
+const profileDropdown = document.querySelector(".profile-dropdown");
+
+let dropdownOpen = false;
+
+profileContainer.addEventListener("click", (e) => {
+    dropdownOpen = !dropdownOpen;
+    profileDropdown.classList.toggle("active", dropdownOpen);
+    
+    // Empêcher la propagation du clic
+    e.stopPropagation();
+});
+
+// Fermer le menu si on clique ailleurs
+document.addEventListener("click", () => {
+    if (dropdownOpen) {
+        dropdownOpen = false;
+        profileDropdown.classList.remove("active");
+    }
+});
+
+    </script>
+</body>
+</html>
