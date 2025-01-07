@@ -1,37 +1,44 @@
 <?php
 class Favori {
     private $user_id;
-    private $vehicule_id;
+    private $article_id;
 
-    public function __construct($user_id, $vehicule_id) {
+    public function __construct($user_id, $article_id) {
         $this->user_id = $user_id;
-        $this->vehicule_id = $vehicule_id;
+        $this->article_id = $article_id;
     }
 
     public function getUserId() { return $this->user_id; }
-    public function getVehiculeId() { return $this->vehicule_id; }
+    public function getArticleId() { return $this->article_id; }
 
-    public static function getAllFavoris($db, $user_id) {
+    public static function addFavori($db, $user_id, $article_id) {
+        $query = "INSERT INTO Favoris (user_id, article_id) VALUES (:user_id, :article_id)";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':article_id', $article_id);
+        $stmt->execute();
+    }
+
+    public static function deleteFavori($db, $user_id, $article_id) {
+        $query = "DELETE FROM Favoris WHERE user_id = :user_id AND article_id = :article_id";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->bindParam(':article_id', $article_id);
+        $stmt->execute();
+    }
+
+    public static function getFavorisByUser($db, $user_id) {
         $favoris = [];
-        $query = "SELECT * FROM favoris WHERE user_id = :user_id";
+        $query = "SELECT * FROM Favoris WHERE user_id = :user_id";
         $stmt = $db->prepare($query);
         $stmt->bindParam(':user_id', $user_id);
         $stmt->execute();
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $favoris[] = new Favori(
-                $row['user_id'],
-                $row['vehicule_id']
-            );
+            $favori = new Favori($row['user_id'], $row['article_id']);
+            $favoris[] = $favori;
         }
         return $favoris;
     }
-
-    public function save($db) {
-        $query = "INSERT INTO favoris (user_id, vehicule_id) VALUES (:user_id, :vehicule_id)";
-        $stmt = $db->prepare($query);
-        $stmt->bindParam(':user_id', $this->user_id);
-        $stmt->bindParam(':vehicule_id', $this->vehicule_id);
-        $stmt->execute();
-    }
 }
+
 ?>

@@ -18,14 +18,27 @@ CREATE TABLE categories (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE vehicules (
+CREATE TABLE Vehicules (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    modele VARCHAR(100) NOT NULL,
+    modele VARCHAR(255) NOT NULL,
+    marque VARCHAR(255) NOT NULL,
+    categorie_id INT NOT NULL,
+    description TEXT,
     prix DECIMAL(10, 2) NOT NULL,
-    disponibilite BOOLEAN DEFAULT TRUE,
-    categorie_id INT,
-    FOREIGN KEY (categorie_id) REFERENCES categories(id),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    disponibilite BOOLEAN NOT NULL DEFAULT TRUE,
+    annee_fabrication YEAR,
+    kilometrage INT,
+    type_carburant VARCHAR(50),
+    boite_vitesse VARCHAR(50),
+    puissance_moteur INT,
+    couleur VARCHAR(50),
+    equipements_standards TEXT,
+    options_supplementaires TEXT,
+    dates_disponibles TEXT,
+    lieu_prise_en_charge VARCHAR(255),
+    lieu_retour VARCHAR(255),
+    image_path VARCHAR(255),
+    FOREIGN KEY (categorie_id) REFERENCES Categories(id)
 );
 
 CREATE TABLE reservations (

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drive & Loc Blog</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-50 min-h-screen">
+  <div class="min-h-screen bg-neutral-900">
+  <!-- Navigation -->
+  <nav class="fixed top-0 w-full z-50 px-8 py-6 bg-neutral-900/90 backdrop-blur-sm">
+    <div class="flex justify-between items-center max-w-7xl mx-auto">
+      <div class="text-white font-bold text-2xl hover:scale-105 transition-all duration-300 cursor-pointer">
+        DRIVE & LOC BLOG
+      </div>
+
+      <!-- Desktop Menu -->
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#articles" class="text-white hover:text-gray-300 transition-all duration-300">Articles</a>
+        <a href="#experiences" class="text-white hover:text-gray-300 transition-all duration-300">Expériences</a>
+        <a href="#destinations" class="text-white hover:text-gray-300 transition-all duration-300">Destinations</a>
+        <button class="bg-white text-black px-6 py-2 rounded hover:bg-gray-200 hover:-translate-y-0.5 transition-all duration-300">
+          Créer un Article
+        </button>
+      </div>
+
+      <button class="md:hidden text-white" onclick="toggleMenu()">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <div class="pt-24 px-8 max-w-7xl mx-auto">
+    <div class="flex flex-col md:flex-row items-center gap-12 py-16">
+      <div class="w-full md:w-1/2">
+        <h2 class="text-gray-400 text-xl mb-4 tracking-wider">BLOG AUTOMOBILE DE LUXE</h2>
+        <h1 class="text-white text-4xl md:text-6xl font-bold mb-6 leading-tight">
+          Découvrez des Expériences Automobiles Uniques
+        </h1>
+        <div class="relative">
+          <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M7 10h10M7 6h10M7 14h10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+          <input
+            type="text"
+            placeholder="Rechercher des articles..."
+            class="w-full pl-12 pr-4 py-3 bg-neutral-800 text-white rounded-lg focus:ring-2 focus:ring-white/20 transition-all duration-300"
+          />
+        </div>
+      </div>
+      <div class="w-full md:w-1/2">
+        <div class="grid grid-cols-2 gap-4">
+         <div key="${i}" class="relative group overflow-hidden rounded-lg">
+              <img
+                src="img2/Van Life.jpg"
+                alt="Luxury car"
+                class="w-full h-48 object-cover transform group-hover:scale-110 transition-all duration-500"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            </div>`
+         
+        </div>
+      </div>
+    </div>
+
+    <script>
+        // Function to toggle the mobile menu visibility
+        function toggleMenu() {
+          const menu = document.getElementById('mobileMenu');
+          menu.classList.toggle('hidden');
+        }
+      </script>
+      
+      <!-- Mobile Menu -->
+      <div id="mobileMenu" class="hidden fixed inset-0 bg-neutral-800 bg-opacity-90 z-40">
+        <div class="flex justify-end p-6">
+          <button onclick="toggleMenu()" class="text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+      
+        <div class="flex flex-col items-center py-8">
+          <a href="#articles" class="text-white text-xl py-4 hover:text-gray-300 transition-all duration-300">Articles</a>
+          <a href="#experiences" class="text-white text-xl py-4 hover:text-gray-300 transition-all duration-300">Expériences</a>
+          <a href="#destinations" class="text-white text-xl py-4 hover:text-gray-300 transition-all duration-300">Destinations</a>
+          <button class="bg-white text-black px-6 py-2 rounded mt-6 hover:bg-gray-200 hover:-translate-y-0.5 transition-all duration-300">
+            Créer un Article
+          </button>
+        </div>
+      </div>
+      
+      <!-- Main Content -->
+      <div class="pt-24 px-8 max-w-7xl mx-auto">
+        <section class="py-16">
+          <!-- Featured Articles -->
+          <div class="flex justify-between items-center mb-8">
+            <h2 class="text-white text-3xl font-bold">Articles Tendance</h2>
+            <button class="text-gray-400 hover:text-white transition-colors duration-300 flex items-center gap-2">
+              Voir tout
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+              </svg>
+            </button>
+          </div>
+      
+          <!-- Article Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Article Example (Repeatable Block) -->
+            <article class="bg-neutral-800 rounded-lg overflow-hidden group hover:transform hover:scale-[1.02] transition-all duration-300">
+              <div class="relative">
+                <img src="img2/5d323a2a-5f8b-4e50-bf7b-aa191f5da2b6.jpg" alt="Article thumbnail" class="w-full h-64 object-cover" />
+                <div class="absolute top-4 left-4 px-3 py-1 bg-white/10 backdrop-blur-sm rounded-full text-white text-sm">
+                  Supercar
+                </div>
+              </div>
+              <div class="p-6">
+                <h3 class="text-white text-xl font-semibold mb-3 group-hover:text-orange-500 transition-colors duration-300">
+                  Les Routes Mythiques des Alpes
+                </h3>
+                <p class="text-gray-400 mb-4">
+                  Découvrez les plus beaux parcours alpins au volant d'une voiture d'exception...
+                </p>
+                <div class="flex justify-between items-center">
+                  <div class="flex items-center gap-4">
+                    <button class="text-gray-400 hover:text-white transition-colors duration-300 flex items-center gap-1">
+                        ❤️ 245
+                    </button>
+                    <button class="text-gray-400 hover:text-white transition-colors duration-300 flex items-center gap-1">
+                        💬
+                      48
+                    </button>
+                  </div>
+                  <button class="text-gray-400 hover:text-white transition-colors duration-300">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 19l7-7-7-7"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+      </div>
+      
+      <!-- Script to toggle mobile menu visibility -->
+      <script>
+        function toggleMenu() {
+          const menu = document.getElementById('mobileMenu');
+          menu.classList.toggle('hidden');
+        }
+      </script>
+      
+
+</body>
+
+</html>
