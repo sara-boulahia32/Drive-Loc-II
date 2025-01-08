@@ -10,8 +10,10 @@ class Article {
     private $theme_id;
     private $date_creation;
     private $date_modification;
+    private $theme_name; 
+    private $user_name;
 
-    public function __construct($id, $titre, $contenu, $image_path, $video_path, $statut, $user_id, $theme_id, $date_creation, $date_modification) {
+    public function __construct($id, $titre, $contenu, $image_path, $video_path, $statut, $user_id, $theme_id, $date_creation, $date_modification, $theme_name, $user_name) {
         $this->id = $id;
         $this->titre = $titre;
         $this->contenu = $contenu;
@@ -22,6 +24,8 @@ class Article {
         $this->theme_id = $theme_id;
         $this->date_creation = $date_creation;
         $this->date_modification = $date_modification;
+        $this->theme_name = $theme_name; 
+        $this->user_name = $user_name;
     }
 
     public function getId() { return $this->id; }
@@ -34,6 +38,8 @@ class Article {
     public function getThemeId() { return $this->theme_id; }
     public function getDateCreation() { return $this->date_creation; }
     public function getDateModification() { return $this->date_modification; }
+    public function getThemeName() { return $this->theme_name; } 
+    public function getUserName() { return $this->user_name; }
 
     public static function getAllArticles($db) {
         $articles = [];
@@ -41,7 +47,7 @@ class Article {
         $stmt = $db->prepare($query);
         $stmt->execute();
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-            $article = new Article($row['id'], $row['titre'], $row['contenu'], $row['image_path'], $row['video_path'], $row['statut'], $row['user_id'], $row['theme_id'], $row['date_creation'], $row['date_modification']);
+            $article = new Article($row['id'], $row['titre'], $row['contenu'], $row['image_path'], $row['video_path'], $row['statut'], $row['user_id'], $row['theme_id'], $row['date_creation'], $row['date_modification'], $row['user_name'], $row['theme_name']);
             $articles[] = $article;
         }
         return $articles;
@@ -90,6 +96,28 @@ class Article {
         $stmt = $db->prepare($query);
         $stmt->bindParam(':id', $id);
         $stmt->execute();
+    }
+    public static function getArticleById($db, $id) { 
+        $query = "SELECT a.*, t.nom AS theme_name, u.nom AS user_name FROM Articles a JOIN Themes t ON a.theme_id = t.id JOIN Users u ON a.user_id = u.id WHERE a.id = :id"; 
+        $stmt = $db->prepare($query); 
+        $stmt->bindParam(':id', $id); 
+        $stmt->execute(); 
+        $row = $stmt->fetch(PDO::FETCH_ASSOC); 
+        if ($row) { 
+            return new Article(
+            $row['id'], 
+            $row['titre'], 
+            $row['contenu'], 
+            $row['image_path'], 
+            $row['video_path'], 
+            $row['statut'], 
+            $row['user_id'], 
+            $row['theme_id'], 
+            $row['date_creation'], 
+            $row['date_modification'],
+            $row['theme_name'],
+            $row['user_name']); 
+        } return null; 
     }
 }
 

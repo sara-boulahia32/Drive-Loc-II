@@ -11,9 +11,10 @@ require_once('../classes/vehicule.php');
 require_once('../classes/categorie.php');
 require_once('../classes/avis.php');
 require_once('../classes/statistiques.php');
+require_once('../classes/theme.php'); // Inclure la classe Theme
 
 $db = dataBase::getInstance()->getConnection();
-$admin = new Admin('', '', '', '', 'admin',); 
+$admin = new Admin('', '', '', '', 'admin'); 
 $statistiques = Statistiques::getStatistiques($db); 
 $vehicules = Vehicule::getAllVehicules($db); 
 $categories = Categorie::getAllCategories($db); 
@@ -28,19 +29,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $categorie_id = $_POST['categorie_id']; 
         $image_path = $_FILES['image']['name']; 
         move_uploaded_file($_FILES['image']['tmp_name'], "../uploads/" . $image_path); 
-        $vehicule = new Vehicule("",$modele, $marque, $categorie_id, $description, $prix, $diponibilite, $annee_fabrication, $kilometrage, $type_carburant, $boite_vitesse, $puissance_moteur, $couleur, $equipements_standards, $options_supplementaires, $dates_disponibles, $lieu_prise_en_charge, $lieu_retour, $image_path); 
-       
+        $vehicule = new Vehicule("", $modele, $marque, $categorie_id, $description, $prix, $disponibilite, $annee_fabrication, $kilometrage, $type_carburant, $boite_vitesse, $puissance_moteur, $couleur, $equipements_standards, $options_supplementaires, $dates_disponibles, $lieu_prise_en_charge, $lieu_retour, $image_path); 
         $admin->ajouterVehicule($db, $vehicule); 
     } elseif ($action == 'add_categorie') { 
         $nom = $_POST['nom']; 
         $description = $_POST['description']; 
         $categorie = new Categorie($nom, $description); 
         $admin->ajouterCategorie($db, $categorie); 
+    } elseif ($action == 'add_theme') { 
+        $nom = $_POST['nom']; 
+        $description = $_POST['description']; 
+        Theme::addTheme($db, $nom, $description); 
     } elseif ($action == 'delete_avis') { 
         $avis_id = $_POST['avis_id']; 
         Avis::softDelete($db, $avis_id); 
     } 
-    header("Location: dashboard.php"); exit(); 
+    header("Location: dashboard.php"); 
+    exit(); 
 }
 
 $query = "
@@ -61,9 +66,8 @@ $query = "
 $stmt = $db->prepare($query);
 $stmt->execute();
 $avisList = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -187,7 +191,11 @@ $avisList = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <button class="border border-white text-white px-8 py-3 rounded-sm hover:bg-white/10 transition-all" onclick="document.getElementById('addCategoryModal').classList.remove('hidden')">Add Category</button>
         </div>
 
-       
+       <!-- Add theme Button -->
+       <div class="mb-12">
+            <button class="border border-white text-white px-8 py-3 rounded-sm hover:bg-white/10 transition-all" onclick="document.getElementById('addThemeModal').classList.remove('hidden')">Add Theme</button>
+        </div>
+
 
         <!-- Add Vehicle Modal -->
         <div id="addVehicleModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
@@ -223,6 +231,23 @@ $avisList = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <textarea id="description" name="description" required class="mb-4 p-2 border rounded text-black"></textarea><br>
                     <button type="submit" class="bg-white text-black px-8 py-3 rounded-sm hover:bg-gray-200 transition-all">Add Category</button>
                     <button type="button" class="border border-white text-white px-8 py-3 rounded-sm hover:bg-white/10 transition-all" onclick="document.getElementById('addCategoryModal').classList.add('hidden')">Cancel</button>
+                </form>
+            </div>
+        </div>
+        <!-- Add Theme Modal -->
+        <div id="addThemeModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-black p-8 rounded-lg">
+                <h2 class="text-2xl mb-4 text-white">Add Theme</h2>
+                <form method="post" action="dashboard.php">
+                    <input type="hidden" name="action" value="add_theme">
+                    <label for="nom" class="text-white">Nom:</label>
+                    <input type="text" id="nom" name="nom" required class="mb-4 p-2 border rounded text-black w-full"><br>
+                    <label for="description" class="text-white">Description:</label>
+                    <textarea id="description" name="description" required class="mb-4 p-2 border rounded text-black w-full"></textarea><br>
+                    <div class="flex justify-end">
+                        <button type="submit" class="bg-white text-black px-8 py-3 rounded-sm hover:bg-gray-200 transition-all">Add Theme</button>
+                        <button type="button" class="border border-white text-white px-8 py-3 rounded-sm hover:bg-white/10 transition-all" onclick="document.getElementById('addThemeModal').classList.add('hidden')">Cancel</button>
+                    </div>
                 </form>
             </div>
         </div>
