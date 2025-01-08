@@ -3,6 +3,8 @@ session_start();
 require_once('../database/db.php');
 require_once('../classes/article.php');
 require_once('../classes/theme.php');
+require_once('../classes/tag.php');
+require_once('../classes/articleTag.php');
 
 if (!isset($_GET['id'])) {
     header("Location: index.php");
@@ -54,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         Article::updateArticle($db, $article_id, $titre, $contenu, $image_path, $video_path, $theme_id);
 
         // Update tags
-        ArticleTag::deleteTagsByArticle($db, $article_id);
+        ArticleTag::deleteArticleTag($db, $article_id, $tag_id);
         foreach ($tags as $tag_name) {
             $tag_name = trim($tag_name);
             if (!empty($tag_name)) {
@@ -69,7 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Suppression de l'article
         $article_id = $_POST['article_id'];
         Article::deleteArticle($db, $article_id);
-        header("Location: articles.php");
+        header("Location: article.php");
         exit();
     }
 }
@@ -120,7 +122,7 @@ $themes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <img src="../uploads/<?php echo $article->getImagePath(); ?>" alt="Article Image" class="w-full h-full object-cover">
             </div>
             <div class="p-6">
-            <h3><?php echo htmlspecialchars($article->getTitre(), ENT_QUOTES, 'UTF-8'); ?></h3>
+            <h3 ><?php echo htmlspecialchars($article->getTitre(), ENT_QUOTES, 'UTF-8'); ?></h3>
             <p class="text-silver-300 mb-4">Contenu : <?php echo $article->getContenu(); ?></p>
                 <p class="text-silver-300 mb-4">Statut : <?php echo $article->getStatut(); ?></p>
                 <p class="text-silver-300 mb-4">Date de création : <?php echo $article->getDateCreation(); ?></p>
@@ -141,7 +143,7 @@ $themes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
     <!-- Article Form Modal for Modification -->
-<div id="editArticleFormModal" class="fixed hidden inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+<div id="editArticleFormModal" class="fixed  inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
   <div class="bg-black p-8 rounded-lg">
     <h2 class="text-2xl mb-4 text-white">Modifier l'Article</h2>
     <form id="editArticleForm" method="post" enctype="multipart/form-data">
@@ -165,8 +167,8 @@ $themes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <?php endforeach; ?>
       </select><br>
 
-      <label for="edit_tags" class="text-white">Tags (séparés par des virgules):</label>
-      
+      <label for="edit_tags" class="text-white">Tags (séparés par #):</label>
+      <input type="text" id="edit_tags" name="tags" value="<?php echo implode('#', $article->getTags($db)); ?>" class="mb-4 p-2 border rounded text-black w-full"><br>
 
       <div class="flex justify-end">
         <button type="button" class="border border-white text-white px-8 py-3 rounded-sm hover:bg-white/10 transition-all mr-2" onclick="document.getElementById('editArticleFormModal').classList.add('hidden')">Annuler</button>

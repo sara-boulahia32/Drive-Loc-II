@@ -119,6 +119,7 @@ class Article {
             $row['user_name']); 
         } return null; 
     }
+    public function getTags($db) { return ArticleTag::getTagsByArticle($db, $this->id); }
 }
 
 ?>

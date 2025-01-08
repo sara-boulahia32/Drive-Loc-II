@@ -36,6 +36,22 @@ class Tag {
         $stmt->bindParam(':id', $id);
         $stmt->execute();
     }
+        
+    public static function getOrCreateTag($db, $nom) {
+        $query = "SELECT id FROM Tags WHERE nom = :nom";
+        $stmt = $db->prepare($query);
+        $stmt->bindParam(':nom', $nom);
+        $stmt->execute();
+        $tag = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($tag) {
+            return $tag['id'];
+        } else {
+            // Ajouter le tag s'il n'existe pas
+            self::addTag($db, $nom);
+            return $db->lastInsertId();
+        }
+    }
 }
 
 ?>

@@ -1,7 +1,7 @@
 <?php
 class ArticleTag {
-    private $article_id;
-    private $tag_id;
+    public $article_id;
+    public $tag_id;
 
     public function __construct($article_id, $tag_id) {
         $this->article_id = $article_id;
@@ -41,5 +41,8 @@ class ArticleTag {
         }
         return $tags;
     }
+
+
+
 }
 ?>

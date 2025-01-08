@@ -4,53 +4,68 @@ require_once('../database/db.php');
 require_once('../classes/article.php');
 require_once('../classes/tag.php');
 require_once('../classes/articletag.php');
+
 $db = dataBase::getInstance()->getConnection();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $titre = $_POST['titre'];
-    $contenu = $_POST['contenu'];
-    $theme_id = $_POST['theme'];
-    $user_id = $_SESSION['user_id']; 
-    $tags = explode(',', $_POST['tags']); 
-    $image_path = null;
-    if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-        $image_path = '../uploads/' . basename($_FILES['image']['name']);
-        move_uploaded_file($_FILES['image']['tmp_name'], $image_path);
-    }
-    $video_path = null;
-    if (isset($_FILES['video']) && $_FILES['video']['error'] == 0) {
-        $video_path = '../uploads/' . basename($_FILES['video']['name']);
-        move_uploaded_file($_FILES['video']['tmp_name'], $video_path);
-    }
-    Article::addArticle($db, $titre, $contenu, $image_path, $video_path, $user_id, $theme_id);
-    $article_id = $db->lastInsertId();
-    foreach ($tags as $tag_name) {
-        $tag_name = trim($tag_name);
-        if (!empty($tag_name)) {
-            $query = "SELECT id FROM Tags WHERE nom = :nom";
-            $stmt = $db->prepare($query);
-            $stmt->bindParam(':nom', $tag_name);
-            $stmt->execute();
-            $tag = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($tag) {
-                $tag_id = $tag['id'];
-            } else {
-                Tag::addTag($db, $tag_name);
-                $tag_id = $db->lastInsertId();
-            }
-            ArticleTag::addArticleTag($db, $article_id, $tag_id);
+    if (isset($_POST['titre'])) {
+        // Ajout d'un article
+        $titre = $_POST['titre'];
+        $contenu = $_POST['contenu'];
+        $theme_id = $_POST['theme'];
+        $user_id = $_SESSION['user_id']; 
+        $tags = explode(',', $_POST['tags']); 
+        $image_path = null;
+        if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+            $image_path = '../uploads/' . basename($_FILES['image']['name']);
+            move_uploaded_file($_FILES['image']['tmp_name'], $image_path);
         }
+        $video_path = null;
+        if (isset($_FILES['video']) && $_FILES['video']['error'] == 0) {
+            $video_path = '../uploads/' . basename($_FILES['video']['name']);
+            move_uploaded_file($_FILES['video']['tmp_name'], $video_path);
+        }
+        Article::addArticle($db, $titre, $contenu, $image_path, $video_path, $user_id, $theme_id);
+        $article_id = $db->lastInsertId();
+        foreach ($tags as $tag_name) {
+            $tag_name = trim($tag_name);
+            if (!empty($tag_name)) {
+                $query = "SELECT id FROM Tags WHERE nom = :nom";
+                $stmt = $db->prepare($query);
+                $stmt->bindParam(':nom', $tag_name);
+                $stmt->execute();
+                $tag = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($tag) {
+                    $tag_id = $tag['id'];
+                } else {
+                    Tag::addTag($db, $tag_name);
+                    $tag_id = $db->lastInsertId();
+                }
+                ArticleTag::addArticleTag($db, $article_id, $tag_id);
+            }
+        }
+        header("Location: article.php");
+        exit();
+    } elseif (isset($_POST['search'])) {
+        // Recherche d'articles
+        $search = trim($_POST['search']);
+        $query = "SELECT * FROM Articles WHERE titre LIKE :search OR contenu LIKE :search";
+        $stmt = $db->prepare($query);
+        $stmt->bindValue(':search', "%$search%", PDO::PARAM_STR);
+        $stmt->execute();
+        $articles = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        echo json_encode($articles);
+        exit();
     }
-    header("Location: article.php");
-    exit();
 }
+
 $query = "SELECT * FROM Themes";
 $stmt = $db->prepare($query);
 $stmt->execute();
 $themes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 ?>
+
 
 
 
@@ -104,17 +119,19 @@ $themes = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <h1 class="text-white text-4xl md:text-6xl font-bold mb-6 leading-tight">
           Découvrez des Expériences Automobiles Uniques
         </h1>
-        <div class="relative">
-          <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M7 10h10M7 6h10M7 14h10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-          </svg>
-          <input
-            type="text"
-            placeholder="Rechercher des articles..."
-            class="w-full pl-12 pr-4 py-3 bg-neutral-800 text-white rounded-lg focus:ring-2 focus:ring-white/20 transition-all duration-300"
-          />
-        </div>
-      </div>
+        <div class="relative flex flex">
+  <svg class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M7 10h10M7 6h10M7 14h10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+  </svg>
+  <input
+    type="text"
+    placeholder="Rechercher des articles..."
+    id="searchInput"
+    class="w-full pl-12 pr-4 py-3 bg-neutral-800 text-white rounded-lg focus:ring-2 focus:ring-white/20 transition-all duration-300"
+  />
+  <button type="button" id="searchButton" class="bg-transparent border-2 border-white text-white px-6 py-2 rounded-md hover:bg-white hover:text-black transition-all">Rechercher</button>
+</div>
+</div>
       <div class="w-full md:w-1/2">
         <div class="grid grid-cols-2 gap-4">
          <div key="${i}" class="relative group overflow-hidden rounded-lg">
@@ -123,10 +140,20 @@ $themes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 alt="Luxury car"
                 class="w-full h-48 object-cover transform group-hover:scale-110 transition-all duration-500"
               />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
+                
+              </div>
             </div>`
          
         </div>
+      </div>
+    </div>
+
+        <!-- Themes Section -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <h2 class="text-3xl font-bold text-white mb-8">Thèmes</h2>
+      <div id="themesContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Data will be loaded here via Ajax -->
       </div>
     </div>
 
@@ -150,6 +177,9 @@ $themes = $stmt->fetchAll(PDO::FETCH_ASSOC);
           <!-- Pagination buttons will be added here --> 
           </div> 
         </div>
+
+
+
   
 
 <!-- Article Form Modal -->
@@ -296,7 +326,7 @@ $themes = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <img src="../uploads/${article.image_path}" alt="Article Image" class="w-full h-full object-cover">
                                 </div>
                                 <div class="p-6">
-                                    <h3 class="text-xl font-bold text-white mb-2">${article.titre}</h3>
+                                    <h3 class="text-white text-xl font-semibold mb-3 group-hover:text-orange-500 transition-colors duration-300">${article.titre}</h3>
                                     <p class="text-silver-300 mb-4">${article.contenu}</p>
                                     <div class="flex justify-between">
                                         <a href="article_details.php?id=${article.id}" class="bg-transparent border-2 border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-black transition-all">Voir Détails</a>
@@ -341,9 +371,75 @@ $themes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $('#searchInput').keyup(function() {
         loadArticles(currentPage, itemsPerPage);
     });
+    $('#searchButton').click(function() { 
+      console.log('hel');
+      loadArticles(currentPage, itemsPerPage); 
+    });
 
     loadArticles(currentPage, itemsPerPage);
 });
+
+
+$(document).ready(function() {
+    function loadThemes() {
+        $.ajax({
+            url: "fetch_themes.php",
+            type: "POST",
+            data: {
+                search: $('#searchInput').val()
+            },
+            dataType: "json",
+            success: function(json) {
+                var themesContainer = $('#themesContainer');
+                themesContainer.empty();
+                if (json.data && json.data.length > 0) {
+                    $.each(json.data, function(index, theme) {
+                        var themeHtml = `
+                        
+                            <div class="bg-gray-800 p-4 rounded-md shadow-md text-center">
+                            <h3 class="text-xl font-bold text-white ">${theme.nom}</h3>
+                              
+                            </div>
+                        `;
+                        themesContainer.append(themeHtml);
+                    });
+                } else {
+                    themesContainer.append('<p class="text-white">Aucun thème trouvé.</p>');
+                }
+            }
+        });
+    }
+
+    $('#searchInput').keyup(function() {
+        loadThemes();
+    });
+
+    loadThemes();
+});
+document.querySelector('button[type="submit"]').addEventListener('click', function (event) {
+    event.preventDefault();
+    const searchValue = document.getElementById('searchInput').value.trim();
+    
+    if (searchValue) {
+        // Faire une requête Ajax pour chercher des articles
+        fetch(`search.php?q=${encodeURIComponent(searchValue)}`)
+            .then(response => response.json())
+            .then(data => {
+                const articlesContainer = document.getElementById('articlesContainer');
+                articlesContainer.innerHTML = ''; // Vider les anciens articles
+                data.forEach(article => {
+                    articlesContainer.innerHTML += `
+                        <div class="article">
+                            <h3>${article.title}</h3>
+                            <p>${article.content}</p>
+                        </div>
+                    `;
+                });
+            })
+            .catch(error => console.error('Erreur lors de la recherche:', error));
+    }
+});
+
 
       </script>
 
