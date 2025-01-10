@@ -50,7 +50,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } elseif (isset($_POST['search'])) {
         // Recherche d'articles
         $search = trim($_POST['search']);
-        $query = "SELECT * FROM Articles WHERE titre LIKE :search OR contenu LIKE :search";
+        $query = "SELECT a.*, t.nom AS theme_name 
+                  FROM Articles a 
+                  JOIN Themes t ON a.theme_id = t.id 
+                  WHERE a.titre LIKE :search OR a.contenu LIKE :search OR t.nom LIKE :search";
         $stmt = $db->prepare($query);
         $stmt->bindValue(':search', "%$search%", PDO::PARAM_STR);
         $stmt->execute();
@@ -65,8 +68,6 @@ $stmt = $db->prepare($query);
 $stmt->execute();
 $themes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
-
-
 
 
 <!DOCTYPE html>
@@ -369,6 +370,8 @@ $themes = $stmt->fetchAll(PDO::FETCH_ASSOC);
     });
 
     $('#searchInput').keyup(function() {
+      console.log('hel');
+
         loadArticles(currentPage, itemsPerPage);
     });
     $('#searchButton').click(function() { 
